@@ -722,32 +722,45 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
 
     -- Update Loop
     task.spawn(function()
+        print("[Debug] Server Info update loop started")
+        local loopCount = 0
         while true do
-            -- Real Time
-            local statusTime = os.date("%H:%M:%S")
-
-            -- Game Time
-            local clockTime = game:GetService("Lighting").ClockTime
-            local timeState = (clockTime >= 6 and clockTime < 18) and "Day ☀️" or "Night 🌙"
-            local gameTimeStr = utils.FormatGameTime(clockTime) .. " " .. timeState
-
-            -- Server Uptime
-            local serverTime = workspace.DistributedGameTime
-            local uptimeStr = utils.FormatTime(serverTime)
-
-            -- Update Paragraphs
-            if RealTimePara then
-                RealTimePara:SetDesc(statusTime)
+            loopCount = loopCount + 1
+            if loopCount <= 3 then
+                print("[Debug] Server Info loop iteration", loopCount)
             end
-            if GameTimePara then
-                GameTimePara:SetDesc(gameTimeStr)
-            end
-            if UptimePara then
-                UptimePara:SetDesc(uptimeStr)
-            end
+            
+            local success, err = pcall(function()
+                -- Real Time
+                local statusTime = os.date("%H:%M:%S")
 
-            -- Update Info UI
-            infoUI.Update(utils.FormatTime, utils.FormatGameTime)
+                -- Game Time
+                local clockTime = game:GetService("Lighting").ClockTime
+                local timeState = (clockTime >= 6 and clockTime < 18) and "Day ☀️" or "Night 🌙"
+                local gameTimeStr = utils.FormatGameTime(clockTime) .. " " .. timeState
+
+                -- Server Uptime
+                local serverTime = workspace.DistributedGameTime
+                local uptimeStr = utils.FormatTime(serverTime)
+
+                -- Update Paragraphs
+                if RealTimePara then
+                    RealTimePara:SetDesc(statusTime)
+                end
+                if GameTimePara then
+                    GameTimePara:SetDesc(gameTimeStr)
+                end
+                if UptimePara then
+                    UptimePara:SetDesc(uptimeStr)
+                end
+
+                -- Update Info UI
+                infoUI.Update(utils.FormatTime, utils.FormatGameTime)
+            end)
+            
+            if not success and loopCount <= 3 then
+                warn("[Debug] Server Info update error:", err)
+            end
 
             task.wait(1)
         end

@@ -11,10 +11,19 @@ local LocalPlayer = Players.LocalPlayer
 
 function AutoFish.Start(config, state, utils, logUI, mainUI)
     local finishRemote = utils.FindRemote("Reel/Finish")
+    print("[Debug] AutoFish.Start called, finishRemote:", finishRemote)
 
     task.spawn(function()
+        local loopCount = 0
         while true do
             task.wait(0.1)
+            loopCount = loopCount + 1
+            
+            if loopCount <= 5 then
+                print("[Debug] AutoFish loop", loopCount, "StopAll:", config.StopAll, "AutoFish:", config.AutoFish)
+            elseif loopCount == 6 then
+                print("[Debug] AutoFish loop running normally... (suppressing further debug)")
+            end
 
             if not config.StopAll and config.AutoFish then
                 local char = LocalPlayer.Character
