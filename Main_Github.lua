@@ -9,7 +9,7 @@ print("[Fisch FarmHub] Loading from GitHub...")
 -- GitHub Configuration
 -- แก้ URL นี้ให้ตรงกับ repo ของคุณ
 -- ============================================
-local GITHUB_BASE = "https://raw.githubusercontent.com/USERNAME/REPO_NAME/main/modules/"
+local GITHUB_BASE = "https://raw.githubusercontent.com/asdfssa/Project_Fisch_Script/main/modules/"
 -- ตัวอย่าง: "https://raw.githubusercontent.com/yossa/fisch-script/main/modules/"
 
 -- ============================================
