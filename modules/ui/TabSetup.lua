@@ -43,8 +43,8 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
         Title = "Enable Auto Fish",
         Default = false
     })
-    ToggleAutoFish:OnChanged(function()
-        config.AutoFish = Options.AutoFish.Value
+    ToggleAutoFish:OnChanged(function(Value)
+        config.AutoFish = Value
         if config.AutoFish and services.LocalPlayer.Character and services.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
             state.CurrentSpot = services.LocalPlayer.Character.HumanoidRootPart.CFrame
         else
@@ -55,15 +55,15 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
     Tabs.Main:AddToggle("AutoShake", {
         Title = "Auto Shake",
         Default = true
-    }):OnChanged(function()
-        config.AutoShake = Options.AutoShake.Value
+    }):OnChanged(function(Value)
+        config.AutoShake = Value
     end)
 
     Tabs.Main:AddToggle("LockPosition", {
         Title = "Freeze Position",
         Default = true
-    }):OnChanged(function()
-        config.LockPosition = Options.LockPosition.Value
+    }):OnChanged(function(Value)
+        config.LockPosition = Value
     end)
 
     -- ============================================
@@ -76,8 +76,8 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
         Title = "Auto Sell All",
         Default = false
     })
-    ToggleSellAll:OnChanged(function()
-        config.AutoSellAll = Options.AutoSellAll.Value
+    ToggleSellAll:OnChanged(function(Value)
+        config.AutoSellAll = Value
     end)
 
     Autos:AddSlider("SellAllInterval", {
@@ -193,8 +193,8 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
     Tabs.Character:AddToggle("ESPEnabled", {
         Title = "Enable Player ESP",
         Default = false
-    }):OnChanged(function()
-        config.ESPEnabled = Options.ESPEnabled.Value
+    }):OnChanged(function(Value)
+        config.ESPEnabled = Value
         if not config.ESPEnabled then
             local CoreGui = game:GetService("CoreGui")
             local ESPHolder = CoreGui:FindFirstChild("FischESPHolder")
@@ -207,8 +207,8 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
     Tabs.Character:AddToggle("WalkSpeedEnabled", {
         Title = "Enable Walk Speed",
         Default = false
-    }):OnChanged(function()
-        config.WalkSpeedEnabled = Options.WalkSpeedEnabled.Value
+    }):OnChanged(function(Value)
+        config.WalkSpeedEnabled = Value
     end)
 
     Tabs.Character:AddInput("WalkSpeedVal", {
@@ -223,8 +223,8 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
     Tabs.Character:AddToggle("JumpPowerEnabled", {
         Title = "Enable Jump Power",
         Default = false
-    }):OnChanged(function()
-        config.JumpPowerEnabled = Options.JumpPowerEnabled.Value
+    }):OnChanged(function(Value)
+        config.JumpPowerEnabled = Value
     end)
 
     Tabs.Character:AddInput("JumpPowerVal", {
@@ -239,15 +239,15 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
     Tabs.Character:AddToggle("Noclip", {
         Title = "Noclip",
         Default = false
-    }):OnChanged(function()
-        config.Noclip = Options.Noclip.Value
+    }):OnChanged(function(Value)
+        config.Noclip = Value
     end)
 
     Tabs.Character:AddToggle("DashEnabled", {
         Title = "Enable Dash",
         Default = true
-    }):OnChanged(function()
-        config.DashEnabled = Options.DashEnabled.Value
+    }):OnChanged(function(Value)
+        config.DashEnabled = Value
     end)
 
     Tabs.Character:AddSlider("DashSpeed", {
@@ -264,15 +264,15 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
     Tabs.Character:AddToggle("FlyEnabled", {
         Title = "Enable Fly",
         Default = true
-    }):OnChanged(function()
-        config.FlyEnabled = Options.FlyEnabled.Value
+    }):OnChanged(function(Value)
+        config.FlyEnabled = Value
     end)
 
     Tabs.Character:AddToggle("FlyInertia", {
         Title = "Fly Inertia",
         Default = true
-    }):OnChanged(function()
-        config.FlyInertia = Options.FlyInertia.Value
+    }):OnChanged(function(Value)
+        config.FlyInertia = Value
     end)
 
     Tabs.Character:AddSlider("FlySpeed", {
@@ -552,8 +552,8 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
     Visuals:AddToggle("HideShakeUI", {
         Title = "Hide Shake UI (Stealth)",
         Default = false
-    }):OnChanged(function()
-        config.HideShakeUI = Options.HideShakeUI.Value
+    }):OnChanged(function(Value)
+        config.HideShakeUI = Value
     end)
 
     -- ============================================
@@ -562,22 +562,22 @@ function TabSetup.SetupAllTabs(ui, config, state, data, utils, services, logUI, 
     Tabs.Settings:AddToggle("AntiAFK", {
         Title = "Enable Anti AFK",
         Default = true
-    }):OnChanged(function()
-        config.AntiAFK = Options.AntiAFK.Value
+    }):OnChanged(function(Value)
+        config.AntiAFK = Value
     end)
 
     Tabs.Settings:AddToggle("AlwaysPerfect", {
         Title = "Always Perfect Catch",
         Default = true
-    }):OnChanged(function()
-        config.AlwaysPerfect = Options.AlwaysPerfect.Value
+    }):OnChanged(function(Value)
+        config.AlwaysPerfect = Value
     end)
 
     Tabs.Settings:AddToggle("FrozenBar", {
         Title = "Frozen Bar (Visual)",
         Default = true
-    }):OnChanged(function()
-        config.FrozenBar = Options.FrozenBar.Value
+    }):OnChanged(function(Value)
+        config.FrozenBar = Value
     end)
 
     Tabs.Settings:AddSlider("ReelDelay", {
