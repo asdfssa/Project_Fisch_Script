@@ -30,7 +30,7 @@ function MainUI.Create(services, data, config, state)
 
     -- 🖼️ UI SETUP
     local Window = Fluent:CreateWindow({
-        Title = "Farm Hub | version 1.1",
+        Title = "Farm Hub | version 1.2",
         SubTitle = "Ban 100%",
         TabWidth = services.TabsWidth,
         Size = services.WindowSize,
