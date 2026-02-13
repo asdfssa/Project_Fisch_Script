@@ -80,6 +80,9 @@ function LogUI.AddLog(text, color)
     end
 end
 
+-- Assign to _G ตามต้นฉบับ
+_G.AddLog = LogUI.AddLog
+
 function LogUI.SetVisible(enabled)
     if LogGui then
         LogGui.Enabled = enabled

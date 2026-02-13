@@ -62,9 +62,9 @@ _G.ProcessingTotem = false
 -- File Name
 local FileName = "Fisch_FarmHub_Locations.json"
 
--- State variables (ไม่ใช่ _G)
+-- State variables (ไม่ใช่ _G) - แก้ currentSpot เป็น _G
 local currentFlyVelocity = Vector3.new(0, 0, 0)
-local currentSpot = nil
+_G.currentSpot = nil
 local keysDown = {}
 local lastSpacePress = 0
 
@@ -72,7 +72,6 @@ local lastSpacePress = 0
 return {
     FileName = FileName,
     currentFlyVelocity = currentFlyVelocity,
-    currentSpot = currentSpot,
     keysDown = keysDown,
     lastSpacePress = lastSpacePress
-}
+    -- currentSpot ย้ายไปใช้ _G.currentSpot แล้ว

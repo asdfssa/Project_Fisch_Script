@@ -10,7 +10,7 @@ local Config = loadstring(game:HttpGet("https://raw.githubusercontent.com/asdfss
 local currentFlyVelocity = Config.currentFlyVelocity
 local keysDown = Config.keysDown
 local lastSpacePress = Config.lastSpacePress
-local currentSpot = Config.currentSpot
+-- currentSpot ใช้ _G.currentSpot โดยตรง
 
 -- ESP Holder
 local ESPHolder = Instance.new("Folder", Services.CoreGui)
@@ -165,8 +165,8 @@ function Character.Start()
         end
         
         -- Lock Position for Auto Fish
-        if _G.AutoFish and _G.LockPosition and currentSpot and not _G.IsFlying and hrp then
-            hrp.CFrame = currentSpot
+        if _G.AutoFish and _G.LockPosition and _G.currentSpot and not _G.IsFlying and hrp then
+            hrp.CFrame = _G.currentSpot
             hrp.Velocity = Vector3.zero
         end
         

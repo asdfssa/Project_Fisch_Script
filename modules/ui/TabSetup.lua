@@ -36,7 +36,9 @@ function TabSetup.SetupAllTabs(UI, Data, Utils)
     ToggleAutoFish:OnChanged(function()
         _G.AutoFish = Options.AutoFish.Value
         if _G.AutoFish and Services.LocalPlayer.Character and Services.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            -- currentSpot จะถูกเซ็ตใน Character module
+            _G.currentSpot = Services.LocalPlayer.Character.HumanoidRootPart.CFrame
+        else
+            _G.currentSpot = nil
         end
     end)
     Tabs.Main:AddToggle("AutoShake", {Title = "Auto Shake", Default = true }):OnChanged(function() _G.AutoShake = Options.AutoShake.Value end)
