@@ -1,0 +1,11 @@
+# Git Ignore File
+# Exclude Original folder containing source scripts
+Original/
+
+# Exclude common files
+*.txt
+*.log
+
+# Exclude local testing files
+Main.lua
+*.json

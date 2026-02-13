@@ -1,37 +1,23 @@
 -- ============================================
--- FLY UI MODULE - หน้าต่างควบคุมการบิน (Mobile)
+-- FLY UI MODULE - Fly Control Panel (ต้นฉบับ)
 -- ============================================
 
 local FlyUI = {}
 
--- Services
-local CoreGui = game:GetService("CoreGui")
-
 -- UI Elements
-FlyUI.Gui = nil
-FlyUI.Frame = nil
-FlyUI.Content = nil
-FlyUI.ToggleBtn = nil
-FlyUI.BoostBtn = nil
-FlyUI.MinimizeBtn = nil
-FlyUI.IsMinimized = false
+local FlyGui, FlyFrame, ToggleFlyBtn, BoostFlyBtn
+local Services = loadstring(game:HttpGet("https://raw.githubusercontent.com/asdfssa/Project_Fisch_Script/main/modules/services/Services.lua"))()
 
--- References to external state (will be set via Init)
-FlyUI.State = nil
-
--- ฟังก์ชันสร้าง Fly UI
-function FlyUI.Create(state)
-    FlyUI.State = state
-
+function FlyUI.Create()
     -- [[ ✈️ FLY CONTROL PANEL (MOBILE) ]] --
-    local FlyGui = Instance.new("ScreenGui")
+    FlyGui = Instance.new("ScreenGui")
     FlyGui.Name = "FischFlyGui"
-    FlyGui.Parent = CoreGui
-    FlyGui.Enabled = false -- เริ่มต้นปิดไว้
+    FlyGui.Parent = game:GetService("CoreGui")
+    FlyGui.Enabled = false
     FlyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
     -- กรอบหลัก
-    local FlyFrame = Instance.new("Frame")
+    FlyFrame = Instance.new("Frame")
     FlyFrame.Name = "FlyMainFrame"
     FlyFrame.Parent = FlyGui
     FlyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
@@ -73,7 +59,7 @@ function FlyUI.Create(state)
     FlyContent.Size = UDim2.new(1, -20, 1, -45)
 
     -- 1. ปุ่ม On/Off (Main Toggle)
-    local ToggleFlyBtn = Instance.new("TextButton")
+    ToggleFlyBtn = Instance.new("TextButton")
     ToggleFlyBtn.Name = "ToggleFlyBtn"
     ToggleFlyBtn.Parent = FlyContent
     ToggleFlyBtn.Size = UDim2.new(1, 0, 0, 50)
@@ -86,7 +72,7 @@ function FlyUI.Create(state)
     Instance.new("UICorner", ToggleFlyBtn).CornerRadius = UDim.new(0, 8)
 
     -- 2. ปุ่ม Speed Boost
-    local BoostFlyBtn = Instance.new("TextButton")
+    BoostFlyBtn = Instance.new("TextButton")
     BoostFlyBtn.Name = "BoostFlyBtn"
     BoostFlyBtn.Parent = FlyContent
     BoostFlyBtn.Size = UDim2.new(1, 0, 0, 40)
@@ -100,25 +86,27 @@ function FlyUI.Create(state)
 
     -- Logic: ปุ่ม On/Off
     ToggleFlyBtn.MouseButton1Click:Connect(function()
-        state.IsFlying = not state.IsFlying
-        if state.IsFlying then
+        _G.IsFlying = not _G.IsFlying
+        
+        if _G.IsFlying then
             ToggleFlyBtn.Text = "ON"
             ToggleFlyBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
         else
             ToggleFlyBtn.Text = "OFF"
             ToggleFlyBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-            state.FlyVelocity = Vector3.new(0, 0, 0)
-            local char = state.LocalPlayer.Character
-            if char and char:FindFirstChild("Humanoid") then
-                char.Humanoid.PlatformStand = false
+            
+            local char = Services.LocalPlayer.Character
+            if char and char:FindFirstChild("Humanoid") then 
+                char.Humanoid.PlatformStand = false 
             end
         end
     end)
 
     -- Logic: ปุ่ม Boost
     BoostFlyBtn.MouseButton1Click:Connect(function()
-        state.BoostEnabled = not state.BoostEnabled
-        if state.BoostEnabled then
+        _G.BoostEnabled = not _G.BoostEnabled
+        
+        if _G.BoostEnabled then
             BoostFlyBtn.Text = "⚡ Speed: FAST!"
             BoostFlyBtn.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
             BoostFlyBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -130,9 +118,10 @@ function FlyUI.Create(state)
     end)
 
     -- Logic: ย่อ/ขยาย หน้าต่าง
+    local isFlyMinimized = false
     FlyMinimizeBtn.MouseButton1Click:Connect(function()
-        FlyUI.IsMinimized = not FlyUI.IsMinimized
-        if FlyUI.IsMinimized then
+        isFlyMinimized = not isFlyMinimized
+        if isFlyMinimized then
             FlyFrame:TweenSize(UDim2.new(0, 150, 0, 25), "Out", "Quad", 0.3, true)
             FlyContent.Visible = false
             FlyMinimizeBtn.Text = "+"
@@ -143,34 +132,26 @@ function FlyUI.Create(state)
         end
     end)
 
-    -- Save references
-    FlyUI.Gui = FlyGui
-    FlyUI.Frame = FlyFrame
-    FlyUI.Content = FlyContent
-    FlyUI.ToggleBtn = ToggleFlyBtn
-    FlyUI.BoostBtn = BoostFlyBtn
-    FlyUI.MinimizeBtn = FlyMinimizeBtn
-
     -- Auto Sync Loop
     task.spawn(function()
         while true do
             task.wait(0.2)
             if FlyGui.Enabled then
                 -- Sync ปุ่มบิน
-                if state.IsFlying and ToggleFlyBtn.Text ~= "ON" then
+                if _G.IsFlying and ToggleFlyBtn.Text ~= "ON" then
                     ToggleFlyBtn.Text = "ON"
                     ToggleFlyBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
-                elseif not state.IsFlying and ToggleFlyBtn.Text ~= "OFF" then
+                elseif not _G.IsFlying and ToggleFlyBtn.Text ~= "OFF" then
                     ToggleFlyBtn.Text = "OFF"
                     ToggleFlyBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
                 end
 
                 -- Sync ปุ่ม Boost
-                if state.BoostEnabled and BoostFlyBtn.Text ~= "⚡ Speed: FAST!" then
+                if _G.BoostEnabled and BoostFlyBtn.Text ~= "⚡ Speed: FAST!" then
                     BoostFlyBtn.Text = "⚡ Speed: FAST!"
                     BoostFlyBtn.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
                     BoostFlyBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-                elseif not state.BoostEnabled and BoostFlyBtn.Text ~= "⚡ Speed: Normal" then
+                elseif not _G.BoostEnabled and BoostFlyBtn.Text ~= "⚡ Speed: Normal" then
                     BoostFlyBtn.Text = "⚡ Speed: Normal"
                     BoostFlyBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
                     BoostFlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -178,27 +159,11 @@ function FlyUI.Create(state)
             end
         end
     end)
-
-    return FlyUI
 end
 
--- ฟังก์ชัน Toggle การแสดงผล
-function FlyUI.SetVisible(visible)
-    if FlyUI.Gui then
-        FlyUI.Gui.Enabled = visible
-    end
-end
-
--- ฟังก์ชันอัปเดตสถานะปุ่ม
-function FlyUI.UpdateButtons(isFlying, boostEnabled)
-    if FlyUI.ToggleBtn then
-        if isFlying and FlyUI.ToggleBtn.Text ~= "ON" then
-            FlyUI.ToggleBtn.Text = "ON"
-            FlyUI.ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
-        elseif not isFlying and FlyUI.ToggleBtn.Text ~= "OFF" then
-            FlyUI.ToggleBtn.Text = "OFF"
-            FlyUI.ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-        end
+function FlyUI.SetVisible(enabled)
+    if FlyGui then
+        FlyGui.Enabled = enabled
     end
 end
 

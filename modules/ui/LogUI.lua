@@ -1,28 +1,21 @@
 -- ============================================
--- LOG UI MODULE - หน้าต่างแสดง Logs
+-- LOG UI MODULE - Log System (ต้นฉบับ)
 -- ============================================
 
 local LogUI = {}
 
--- Services
-local CoreGui = game:GetService("CoreGui")
-
 -- UI Elements
-LogUI.Gui = nil
-LogUI.Frame = nil
-LogUI.Scroll = nil
-LogUI.UIList = nil
+local LogGui, LogFrame, LogScroll, UIList
 
--- ฟังก์ชันสร้าง Log UI
 function LogUI.Create()
-    -- 📜 LOG SYSTEM SETUP
-    local LogGui = Instance.new("ScreenGui")
+    -- [[ 📜 LOG SYSTEM SETUP ]] --
+    LogGui = Instance.new("ScreenGui")
     LogGui.Name = "FischLogGui"
-    LogGui.Parent = CoreGui
-    LogGui.Enabled = false -- เริ่มต้นปิดไว้
+    LogGui.Parent = game:GetService("CoreGui")
+    LogGui.Enabled = false
     LogGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    local LogFrame = Instance.new("Frame")
+    LogFrame = Instance.new("Frame")
     LogFrame.Name = "MainFrame"
     LogFrame.Parent = LogGui
     LogFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
@@ -45,7 +38,7 @@ function LogUI.Create()
     LogTitle.TextXAlignment = Enum.TextXAlignment.Left
 
     -- พื้นที่แสดงข้อความ (Scrolling Frame)
-    local LogScroll = Instance.new("ScrollingFrame")
+    LogScroll = Instance.new("ScrollingFrame")
     LogScroll.Parent = LogFrame
     LogScroll.BackgroundTransparency = 1
     LogScroll.Position = UDim2.new(0, 5, 0, 30)
@@ -53,29 +46,21 @@ function LogUI.Create()
     LogScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     LogScroll.ScrollBarThickness = 4
 
-    local UIList = Instance.new("UIListLayout")
+    UIList = Instance.new("UIListLayout")
     UIList.Parent = LogScroll
     UIList.SortOrder = Enum.SortOrder.LayoutOrder
     UIList.Padding = UDim.new(0, 4)
-
-    -- Save references
-    LogUI.Gui = LogGui
-    LogUI.Frame = LogFrame
-    LogUI.Scroll = LogScroll
-    LogUI.UIList = UIList
-
-    return LogUI
+    
+    -- ทดสอบ Log
+    LogUI.AddLog("System initialized...", Color3.fromRGB(100, 255, 100))
 end
 
--- ฟังก์ชันเพิ่ม Log
 function LogUI.AddLog(text, color)
-    if not LogUI.Scroll then
-        return
-    end
-
+    if not LogScroll then return end
+    
     local timestamp = os.date("%H:%M:%S")
     local label = Instance.new("TextLabel")
-    label.Parent = LogUI.Scroll
+    label.Parent = LogScroll
     label.BackgroundTransparency = 1
     label.Size = UDim2.new(1, 0, 0, 18)
     label.Font = Enum.Font.SourceSans
@@ -84,36 +69,30 @@ function LogUI.AddLog(text, color)
     label.TextSize = 14
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.TextWrapped = false
-
-    -- Auto Scroll ลงล่างสุด
-    LogUI.Scroll.CanvasSize = UDim2.new(0, 0, 0, LogUI.UIList.AbsoluteContentSize.Y)
-    LogUI.Scroll.CanvasPosition = Vector2.new(0, LogUI.UIList.AbsoluteContentSize.Y)
-
-    -- ลบ Log เก่าถ้าเยอะเกิน (กันแลค)
-    if #LogUI.Scroll:GetChildren() > 100 then
-        LogUI.Scroll:GetChildren()[2]:Destroy() -- [1] คือ UIListLayout
+    
+    -- Auto Scroll
+    LogScroll.CanvasSize = UDim2.new(0, 0, 0, UIList.AbsoluteContentSize.Y)
+    LogScroll.CanvasPosition = Vector2.new(0, UIList.AbsoluteContentSize.Y)
+    
+    -- ลบ Log เก่าถ้าเยอะเกิน
+    if #LogScroll:GetChildren() > 100 then
+        LogScroll:GetChildren()[2]:Destroy()
     end
 end
 
--- ฟังก์ชันล้าง Logs
+function LogUI.SetVisible(enabled)
+    if LogGui then
+        LogGui.Enabled = enabled
+    end
+end
+
 function LogUI.ClearLogs()
-    if not LogUI.Scroll then
-        return
+    if not LogScroll then return end
+    for _, child in pairs(LogScroll:GetChildren()) do
+        if child:IsA("TextLabel") then child:Destroy() end
     end
-    for _, child in pairs(LogUI.Scroll:GetChildren()) do
-        if child:IsA("TextLabel") then
-            child:Destroy()
-        end
-    end
-    LogUI.Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    LogScroll.CanvasSize = UDim2.new(0,0,0,0)
     LogUI.AddLog("Logs cleared.", Color3.fromRGB(255, 255, 0))
-end
-
--- ฟังก์ชัน Toggle การแสดงผล
-function LogUI.SetVisible(visible)
-    if LogUI.Gui then
-        LogUI.Gui.Enabled = visible
-    end
 end
 
 return LogUI

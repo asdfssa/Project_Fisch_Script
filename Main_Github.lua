@@ -1,16 +1,13 @@
 -- ============================================
--- MAIN LOADER - สำหรับ GitHub/HttpGet
--- ใช้งาน: loadstring(game:HttpGet("YOUR_GITHUB_RAW_URL/Main.lua"))()
+-- MAIN LOADER - สำหรับ GitHub/HttpGet (ต้นฉบับ)
 -- ============================================
 
 print("[Fisch FarmHub] Loading from GitHub...")
 
 -- ============================================
 -- GitHub Configuration
--- แก้ URL นี้ให้ตรงกับ repo ของคุณ
 -- ============================================
 local GITHUB_BASE = "https://raw.githubusercontent.com/asdfssa/Project_Fisch_Script/main/modules/"
--- ตัวอย่าง: "https://raw.githubusercontent.com/yossa/fisch-script/main/modules/"
 
 -- ============================================
 -- Module Loader Function
@@ -52,7 +49,6 @@ local AutoTotem = LoadModule("logic/AutoTotem.lua")
 local AutoPotion = LoadModule("logic/AutoPotion.lua")
 local AutoSell = LoadModule("logic/AutoSell.lua")
 local Character = LoadModule("logic/Character.lua")
-local Teleport = LoadModule("logic/Teleport.lua")
 
 -- Check if all modules loaded
 if not (Config and Services and Data and Utils and MainUI) then
@@ -61,49 +57,38 @@ if not (Config and Services and Data and Utils and MainUI) then
 end
 
 -- ============================================
--- State Management
--- ============================================
-local State = {
-    FlyVelocity = Vector3.new(0, 0, 0),
-    CurrentSpot = nil,
-    LocalPlayer = Services.LocalPlayer
-}
-
--- ============================================
 -- Initialize UI Components
 -- ============================================
 LogUI.Create()
 InfoUI.Create()
-FlyUI.Create(State)
+FlyUI.Create()
 
 -- ============================================
 -- Initialize Main UI
 -- ============================================
-local UI = MainUI.Create(Services, Data, Config, State)
+local UI = MainUI.Create()
 if not UI then
     warn("[Fisch FarmHub] Failed to initialize Main UI")
     return
 end
 
 -- Create Mobile UI
-MainUI.CreateMobileUI(Services)
+MainUI.CreateMobileUI()
 
 -- ============================================
 -- Setup All Tabs
 -- ============================================
-TabSetup.SetupAllTabs(UI, Config, State, Data, Utils, Services, LogUI, InfoUI, FlyUI, Teleport)
+TabSetup.SetupAllTabs(UI, Data, Utils)
 
 -- ============================================
 -- Initialize Logic Systems
 -- ============================================
-AutoFish.Start(Config, State, Utils, LogUI, UI)
-AutoFish.SetupShakeDetection(Utils, Config)
-
-AutoTotem.Start(Config, State, Utils, UI)
-AutoPotion.Start(Config, State, Utils, UI, LogUI)
-AutoSell.Start(Config, Utils, LogUI)
-Character.Start(Config, State, Utils, FlyUI)
-Character.SetupAntiAFK(Config)
+AutoFish.Start()
+AutoFish.SetupShakeDetection()
+AutoTotem.Start()
+AutoPotion.Start()
+AutoSell.Start()
+Character.Start()
 
 -- ============================================
 -- Script Loaded

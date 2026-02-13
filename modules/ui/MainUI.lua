@@ -1,17 +1,18 @@
 -- ============================================
--- MAIN UI MODULE - Fluent UI และ Tabs
+-- MAIN UI MODULE - Fluent UI และ Tabs (ต้นฉบับ)
 -- ============================================
 
 local MainUI = {}
 
--- ตัวแปรเก็บ References
+-- Global references
 MainUI.Window = nil
-MainUI.Tabs = {}
+MainUI.Tabs = nil
 MainUI.Options = nil
 MainUI.Fluent = nil
+MainUI.SaveManager = nil
+MainUI.InterfaceManager = nil
 
--- สร้าง UI หลัก
-function MainUI.Create(services, data, config, state)
+function MainUI.Create()
     -- Load Fluent
     local success, result = pcall(function()
         return loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
@@ -24,21 +25,24 @@ function MainUI.Create(services, data, config, state)
 
     local Fluent = result
     MainUI.Fluent = Fluent
-
+    
     local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
     local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+    MainUI.SaveManager = SaveManager
+    MainUI.InterfaceManager = InterfaceManager
+
+    local Services = loadstring(game:HttpGet("https://raw.githubusercontent.com/asdfssa/Project_Fisch_Script/main/modules/services/Services.lua"))()
 
     -- 🖼️ UI SETUP
     local Window = Fluent:CreateWindow({
         Title = "Farm Hub | version 1.2",
         SubTitle = "Ban 100%",
-        TabWidth = services.TabsWidth,
-        Size = services.WindowSize,
+        TabWidth = Services.TabsWidth,
+        Size = Services.WindowSize,
         Acrylic = false,
         Theme = "Amethyst",
         MinimizeKey = Enum.KeyCode.LeftControl
     })
-
     MainUI.Window = Window
 
     -- สร้าง Tabs
@@ -53,17 +57,8 @@ function MainUI.Create(services, data, config, state)
         Settings = Window:AddTab({ Title = "Settings", Icon = "settings" }),
         ServerInfo = Window:AddTab({ Title = "Server Info", Icon = "info" })
     }
-
     MainUI.Tabs = Tabs
     MainUI.Options = Fluent.Options
-
-    -- Setup SaveManager & InterfaceManager
-    SaveManager:SetLibrary(Fluent)
-    InterfaceManager:SetLibrary(Fluent)
-    SaveManager:IgnoreThemeSettings()
-    InterfaceManager:BuildInterfaceSection(Tabs.Settings)
-    Window:SelectTab(1)
-    SaveManager:LoadAutoloadConfig()
 
     return {
         Fluent = Fluent,
@@ -75,48 +70,34 @@ function MainUI.Create(services, data, config, state)
     }
 end
 
--- ฟังก์ชันสร้าง Mobile UI Toggle
-function MainUI.CreateMobileUI(services)
-    local CoreGui = services.CoreGui
-    local VirtualInputManager = services.VirtualInputManager
+function MainUI.CreateMobileUI()
+    local Services = loadstring(game:HttpGet("https://raw.githubusercontent.com/asdfssa/Project_Fisch_Script/main/modules/services/Services.lua"))()
+    local CoreGui = Services.CoreGui
+    local VirtualInputManager = Services.VirtualInputManager
 
-    if CoreGui:FindFirstChild("FischMobileUI") then
-        CoreGui.FischMobileUI:Destroy()
-    end
-
+    if CoreGui:FindFirstChild("FischMobileUI") then CoreGui.FischMobileUI:Destroy() end
+    
     local ScreenGui = Instance.new("ScreenGui", CoreGui)
     ScreenGui.Name = "FischMobileUI"
-
+    
     local MenuBtn = Instance.new("ImageButton", ScreenGui)
     MenuBtn.Name = "MenuToggle"
-    MenuBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+    MenuBtn.BackgroundColor3 = Color3.new(0,0,0)
     MenuBtn.BackgroundTransparency = 0.5
     MenuBtn.AnchorPoint = Vector2.new(0.5, 0)
     MenuBtn.Position = UDim2.new(0.5, -25, 0.05, 0)
     MenuBtn.Size = UDim2.fromOffset(50, 50)
+    MenuBtn.Size = UDim2.fromOffset(50, 50)
     MenuBtn.Image = "rbxassetid://100142831144115"
     MenuBtn.Draggable = true
-
-    Instance.new("UICorner", MenuBtn).CornerRadius = UDim.new(1, 0)
-    Instance.new("UIStroke", MenuBtn).Color = Color3.new(1, 1, 1)
-
+    Instance.new("UICorner", MenuBtn).CornerRadius = UDim.new(1,0)
+    Instance.new("UIStroke", MenuBtn).Color = Color3.new(1,1,1)
+    
     MenuBtn.MouseButton1Click:Connect(function()
         VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.LeftControl, false, game)
         task.wait(0.05)
         VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.LeftControl, false, game)
     end)
-end
-
--- ฟังก์ชันแจ้งเตือน
-function MainUI.Notify(title, content, duration)
-    duration = duration or 3
-    if MainUI.Fluent then
-        MainUI.Fluent:Notify({
-            Title = title,
-            Content = content,
-            Duration = duration
-        })
-    end
 end
 
 return MainUI

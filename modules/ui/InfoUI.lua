@@ -1,34 +1,22 @@
 -- ============================================
--- INFO UI MODULE - หน้าต่างแสดง Server Info
+-- INFO UI MODULE - Server Info Panel (ต้นฉบับ)
 -- ============================================
 
 local InfoUI = {}
 
--- Services
-local CoreGui = game:GetService("CoreGui")
-local Lighting = game:GetService("Lighting")
+-- UI Elements (Global within module)
+local InfoGui, InfoFrame, RealTimeLabel, GameTimeLabel, UptimeLabel
 
--- UI Elements
-InfoUI.Gui = nil
-InfoUI.Frame = nil
-InfoUI.ContentFrame = nil
-InfoUI.RealTimeLabel = nil
-InfoUI.GameTimeLabel = nil
-InfoUI.UptimeLabel = nil
-InfoUI.MinimizeBtn = nil
-InfoUI.IsMinimized = false
-
--- ฟังก์ชันสร้าง Info UI
 function InfoUI.Create()
     -- [[ ℹ️ SERVER INFO PANEL SETUP ]] --
-    local InfoGui = Instance.new("ScreenGui")
+    InfoGui = Instance.new("ScreenGui")
     InfoGui.Name = "FischInfoGui"
-    InfoGui.Parent = CoreGui
+    InfoGui.Parent = game:GetService("CoreGui")
     InfoGui.Enabled = true
     InfoGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
     -- กรอบหลัก (Main Frame)
-    local InfoFrame = Instance.new("Frame")
+    InfoFrame = Instance.new("Frame")
     InfoFrame.Name = "MainFrame"
     InfoFrame.Parent = InfoGui
     InfoFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
@@ -50,7 +38,7 @@ function InfoUI.Create()
     InfoTitle.TextSize = 14
     InfoTitle.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- ปุ่มพับเก็บ (Minimize Button) [-] / [+]
+    -- ปุ่มพับเก็บ (Minimize Button)
     local MinimizeBtn = Instance.new("TextButton")
     MinimizeBtn.Parent = InfoFrame
     MinimizeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
@@ -84,14 +72,15 @@ function InfoUI.Create()
         return lbl
     end
 
-    local RealTimeLabel = CreateInfoLabel(1, "🕒 Real: ...")
-    local GameTimeLabel = CreateInfoLabel(2, "☀️ Game: ...")
-    local UptimeLabel = CreateInfoLabel(3, "⏳ Up: ...")
+    RealTimeLabel = CreateInfoLabel(1, "🕒 Real: ...")
+    GameTimeLabel = CreateInfoLabel(2, "☀️ Game: ...")
+    UptimeLabel = CreateInfoLabel(3, "⏳ Up: ...")
 
     -- [[ ระบบพับเก็บ (Minimizing Logic) ]] --
+    local isMinimized = false
     MinimizeBtn.MouseButton1Click:Connect(function()
-        InfoUI.IsMinimized = not InfoUI.IsMinimized
-        if InfoUI.IsMinimized then
+        isMinimized = not isMinimized
+        if isMinimized then
             InfoFrame:TweenSize(UDim2.new(0, 250, 0, 25), "Out", "Quad", 0.3, true)
             ContentFrame.Visible = false
             MinimizeBtn.Text = "+"
@@ -101,59 +90,32 @@ function InfoUI.Create()
             MinimizeBtn.Text = "-"
         end
     end)
-
-    -- Save references
-    InfoUI.Gui = InfoGui
-    InfoUI.Frame = InfoFrame
-    InfoUI.ContentFrame = ContentFrame
-    InfoUI.RealTimeLabel = RealTimeLabel
-    InfoUI.GameTimeLabel = GameTimeLabel
-    InfoUI.UptimeLabel = UptimeLabel
-    InfoUI.MinimizeBtn = MinimizeBtn
-
-    return InfoUI
 end
 
--- ฟังก์ชันอัปเดตข้อมูล
-function InfoUI.Update(formatTimeFunc, formatGameTimeFunc)
-    if not InfoUI.Gui or not InfoUI.Gui.Enabled then
-        return
+function InfoUI.SetVisible(enabled)
+    if InfoGui then
+        InfoGui.Enabled = enabled
     end
+end
 
-    -- Real Time
+function InfoUI.Update(formatTimeFunc, formatGameTimeFunc)
+    if not InfoGui or not InfoGui.Enabled then return end
+    
     local statusTime = os.date("%H:%M:%S")
-
-    -- Game Time
-    local clockTime = Lighting.ClockTime
+    local clockTime = game:GetService("Lighting").ClockTime
     local timeState = (clockTime >= 6 and clockTime < 18) and "Day ☀️" or "Night 🌙"
     local gameTimeStr = formatGameTimeFunc(clockTime) .. " " .. timeState
-
-    -- Server Uptime
     local serverTime = workspace.DistributedGameTime
     local uptimeStr = formatTimeFunc(serverTime)
-
-    -- Update labels
-    if InfoUI.RealTimeLabel then
-        InfoUI.RealTimeLabel.Text = "🕒 เวลาชีวิตจริง:  " .. statusTime
-    end
-    if InfoUI.GameTimeLabel then
-        InfoUI.GameTimeLabel.Text = "🗓️ เวลาในเกม: " .. gameTimeStr
-        -- เปลี่ยนสีข้อความตามเวลา
-        if timeState == "Day ☀️" then
-            InfoUI.GameTimeLabel.TextColor3 = Color3.fromRGB(255, 220, 100)
-        else
-            InfoUI.GameTimeLabel.TextColor3 = Color3.fromRGB(100, 150, 255)
-        end
-    end
-    if InfoUI.UptimeLabel then
-        InfoUI.UptimeLabel.Text = "⏳ เวลาที่คุณออนเกม:    " .. uptimeStr
-    end
-end
-
--- ฟังก์ชัน Toggle การแสดงผล
-function InfoUI.SetVisible(visible)
-    if InfoUI.Gui then
-        InfoUI.Gui.Enabled = visible
+    
+    RealTimeLabel.Text = "🕒 เวลาชีวิตจริง:  " .. statusTime
+    GameTimeLabel.Text = "🗓️ เวลาในเกม: " .. gameTimeStr
+    UptimeLabel.Text = "⏳ เวลาที่คุณออนเกม:    " .. uptimeStr
+    
+    if timeState == "Day ☀️" then
+        GameTimeLabel.TextColor3 = Color3.fromRGB(255, 220, 100)
+    else
+        GameTimeLabel.TextColor3 = Color3.fromRGB(100, 150, 255)
     end
 end
 
