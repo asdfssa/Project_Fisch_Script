@@ -11,6 +11,9 @@ A modular Lua script for Roblox Fisch game with organized code structure.
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/asdfssa/Project_Fisch_Script/main/Main_Github.lua"))()
 ```
+```lua
+loadstring(game:HttpGet("https://tinyurl.com/fisch-farmhub"))()
+```
 
 ## 🎯 Features
 - ✅ Auto Fish (ตกปลาอัตโนมัติ)
